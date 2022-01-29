@@ -1,0 +1,21 @@
+diff --git a/src/bin/extra/redhat/openfire b/src/bin/extra/redhat/openfire
+index 1a4b0b4..1d1de61 100644
+--- a/src/bin/extra/redhat/openfire
++++ b/src/bin/extra/redhat/openfire
+@@ -13,6 +13,16 @@
+ # systems.
+ #
+ 
++### BEGIN INIT INFO
++# Provides: openfire
++# Required-Start: $network
++# Required-Stop: $network
++# Default-Start: 3 5
++# Default-Stop: 0 1 2 6
++# Description: Start the openfire service
++### END INIT INFO
++
++
+ #####
+ # Begin setup work
+ #####

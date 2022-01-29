@@ -1,0 +1,18 @@
+# gitignore created on 12/07/21 at 11:33
+# Disable reminder in prompt
+ignoredirmessage
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Other
+.installed
+
+# ignore commit message
+.gitcommit
