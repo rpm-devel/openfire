@@ -155,7 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc documentation/docs/* LICENSE.html README.html changelog.html
 
 %changelog
-* Sat Jan 29 2022 CasjaysDev <rpm-dev@casjaysdev.com> - 4.2.3
+* Sat Jan 29 2022 CasjaysDev <rpm-dev@casjaysdev.pro> - 4.2.3
 - Updated to 4.2.3 and fix source URL
 * Mon Feb 20 2017 Huaren Zhong <huaren.zhong@gmail.com> 4.1.2
 - Rebuild for Fedora
