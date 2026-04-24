@@ -2,13 +2,11 @@
 
 Summary:         Openfire XMPP Server
 Name:            openfire
-Version:         4.2.3
-Release:         2
+Version:         5.0.4
+Release:         1%{?dist}
 BuildRequires:   ant java-devel-openjdk fdupes
 Requires:        java
-#Source0:        http://www.igniterealtime.org/downloadServlet?filename=openfire/openfire_src_4_2_3.tar.gz
-Source0:         openfire_src_4_2_3.tar.gz
-Group:           Applications/Communications
+Source0:         https://github.com/igniterealtime/Openfire/releases/download/v%{version}/openfire-%{version}.tar.gz
 License:         GPL
 URL:             http://www.igniterealtime.org/
 Patch0:          openfire-sysvinit.patch
@@ -24,7 +22,6 @@ and delivers an innovative feature set.
 
 %package doc
 Summary:     Openfire XMPP Server Documentation
-Group:       Documentation/Other
 #BuildArch:  noarch
 
 %description doc
@@ -50,69 +47,54 @@ cd ..
 export NO_BRP_CHECK_BYTECODE_VERSION=true
 
 # Prep the install location.
-mkdir -p $RPM_BUILD_ROOT%{prefix}
+mkdir -p %{buildroot}%{prefix}
 
 # Copy over the main install tree.
-cp -R target/openfire $RPM_BUILD_ROOT%{homedir}
-
-# Set up distributed JRE
-#pushd $RPM_BUILD_ROOT%{homedir}
-#gzip -cd %{SOURCE1} | tar xvf -
-#popd
+cp -R target/openfire %{buildroot}%{homedir}
 
 # Set up the init script.
-mkdir -p $RPM_BUILD_ROOT/etc/init.d
-cp $RPM_BUILD_ROOT%{homedir}/bin/extra/redhat/openfire $RPM_BUILD_ROOT/etc/init.d/openfire
-chmod 755 $RPM_BUILD_ROOT/etc/init.d/openfire
-mkdir -p $RPM_BUILD_ROOT%{_sbindir}
-ln -s -f %{_sysconfdir}/init.d/%{name} $RPM_BUILD_ROOT%{_sbindir}/rc%{name}
+mkdir -p %{buildroot}/etc/init.d
+cp %{buildroot}%{homedir}/bin/extra/redhat/openfire %{buildroot}/etc/init.d/openfire
+chmod 755 %{buildroot}/etc/init.d/openfire
+mkdir -p %{buildroot}%{_sbindir}
+ln -s -f %{_sysconfdir}/init.d/%{name} %{buildroot}%{_sbindir}/rc%{name}
 
 # Make the startup script executable.
-chmod 755 $RPM_BUILD_ROOT%{homedir}/bin/openfire.sh
+chmod 755 %{buildroot}%{homedir}/bin/openfire.sh
 
 # Set up the sysconfig file.
-#mkdir -p $RPM_BUILD_ROOT/etc/sysconfig
-#cp $RPM_BUILD_ROOT%{homedir}/bin/extra/redhat/openfire-sysconfig $RPM_BUILD_ROOT/etc/sysconfig/openfire
-mkdir -p $RPM_BUILD_ROOT%/var/adm/fillup-templates/
-install -D $RPM_BUILD_ROOT%{homedir}/bin/extra/redhat/openfire-sysconfig $RPM_BUILD_ROOT/var/adm/fillup-templates/sysconfig.openfire
-chmod -x $RPM_BUILD_ROOT/var/adm/fillup-templates/sysconfig.openfire
-
-# Copy over the documentation | Not needed with the new openfire-doc package
-#cp -R documentation $RPM_BUILD_ROOT%{homedir}/documentation
-#cp changelog.html $RPM_BUILD_ROOT%{homedir}/
-#cp LICENSE.html $RPM_BUILD_ROOT%{homedir}/
-#cp README.html $RPM_BUILD_ROOT%{homedir}/
+#mkdir -p %{buildroot}/etc/sysconfig
+#cp %{buildroot}%{homedir}/bin/extra/redhat/openfire-sysconfig %{buildroot}/etc/sysconfig/openfire
+mkdir -p %{buildroot}/var/adm/fillup-templates/
+install -D %{buildroot}%{homedir}/bin/extra/redhat/openfire-sysconfig %{buildroot}/var/adm/fillup-templates/sysconfig.openfire
+chmod -x %{buildroot}/var/adm/fillup-templates/sysconfig.openfire
 
 # Copy over the i18n files
-cp -R resources/i18n $RPM_BUILD_ROOT%{homedir}/resources/i18n
+cp -R resources/i18n %{buildroot}%{homedir}/resources/i18n
 
 # Make sure scripts are executable
-chmod 755 $RPM_BUILD_ROOT%{homedir}/bin/extra/openfired
-chmod 755 $RPM_BUILD_ROOT%{homedir}/bin/extra/redhat-postinstall.sh
+chmod 755 %{buildroot}%{homedir}/bin/extra/openfired
+chmod 755 %{buildroot}%{homedir}/bin/extra/redhat-postinstall.sh
 
 # Move over the embedded db viewer pieces
-mv $RPM_BUILD_ROOT%{homedir}/bin/extra/embedded-db.rc $RPM_BUILD_ROOT%{homedir}/bin
-mv $RPM_BUILD_ROOT%{homedir}/bin/extra/embedded-db-viewer.sh $RPM_BUILD_ROOT%{homedir}/bin
+mv %{buildroot}%{homedir}/bin/extra/embedded-db.rc %{buildroot}%{homedir}/bin
+mv %{buildroot}%{homedir}/bin/extra/embedded-db-viewer.sh %{buildroot}%{homedir}/bin
 
 # We don't really need any of these things.
-rm -rf $RPM_BUILD_ROOT%{homedir}/bin/extra
-rm -f $RPM_BUILD_ROOT%{homedir}/bin/*.bat
-rm -rf $RPM_BUILD_ROOT%{homedir}/resources/nativeAuth/osx-ppc
-rm -rf $RPM_BUILD_ROOT%{homedir}/resources/nativeAuth/solaris-sparc
-rm -rf $RPM_BUILD_ROOT%{homedir}/resources/nativeAuth/win32-x86
-rm -f $RPM_BUILD_ROOT%{homedir}/lib/*.dll
-rm -rf $RPM_BUILD_ROOT%{homedir}/resources/spank
+rm -rf %{buildroot}%{homedir}/bin/extra
+rm -f %{buildroot}%{homedir}/bin/*.bat
+rm -rf %{buildroot}%{homedir}/resources/nativeAuth/osx-ppc
+rm -rf %{buildroot}%{homedir}/resources/nativeAuth/solaris-sparc
+rm -rf %{buildroot}%{homedir}/resources/nativeAuth/win32-x86
+rm -f %{buildroot}%{homedir}/lib/*.dll
+rm -rf %{buildroot}%{homedir}/resources/spank
 
 # Dont enable fdupes (on resources/security/) as it breaks the crypto store
 # See: http://www.igniterealtime.org/issues/browse/OF-30
 # For now disabled completely..
-#%fdupes -s $RPM_BUILD_ROOT
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+#%fdupes -s %{buildroot}
 
 %files
-%defattr(-,daemon,daemon)
 %attr(750, daemon, daemon) %dir %{homedir}
 %dir %{homedir}/bin
 %{homedir}/bin/openfire.sh
@@ -142,8 +124,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{homedir}/resources/security/truststore
 %config(noreplace) %{homedir}/resources/security/client.truststore
 #%doc %{homedir}/documentation
-#%doc %{homedir}/LICENSE.html 
-#%doc %{homedir}/README.html 
+#%doc %{homedir}/LICENSE.html
+#%doc %{homedir}/README.html
 #%doc %{homedir}/changelog.html
 %{_sbindir}/rc%{name}
 %{_sysconfdir}/init.d/openfire
@@ -155,6 +137,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc documentation/docs/* LICENSE.html README.html changelog.html
 
 %changelog
+* Fri Apr 24 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.0.4-1
+- Update to 5.0.4
+- Update Source0 to GitHub release tarball URL
+
+* Fri Apr 24 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 4.2.3-2
+- Modernize spec for AlmaLinux 10; remove Group, %clean, %defattr
+- Replace $RPM_BUILD_ROOT with %%{buildroot} throughout
+
 * Sat Jan 29 2022 CasjaysDev <rpm-dev@casjaysdev.pro> - 4.2.3
 - Updated to 4.2.3 and fix source URL
 * Mon Feb 20 2017 Huaren Zhong <huaren.zhong@gmail.com> 4.1.2
@@ -170,54 +160,7 @@ rm -rf $RPM_BUILD_ROOT
 - Change java dependency to "java-sun >=1.6.0" so that SLES 11 works properly
 * Fri Jun 19 2009 claes.backstrom@fsfe.org
 - New upstrean 3.6.4
-  Openfire New Features
-  * Use stronger RSA encryption algorithm for certificates
-    creation.
-  Openfire Bug Fixes
-  * Prevent users from changing other users passwords.
-  * LdapGroups assumed all members never in AltBaseDN.
-  * Stacktrace of exception while initializing SSLConfig are
-    now logged.
-  * DefaultAdminProvider was not including default admin account
-    when there were no admins specified.
 * Wed Apr 29 2009 claes.backstrom@fsfe.org
 - New upstream 3.6.3
-- Handle sysconfig file correctly
-- Created rcopenfire symlink
-- Moved to /usr/share for openSUSE 11.1 and later
-* Thu Apr 23 2009 maw@pobox.com
-- Replace openfirect.patch with openfire-sysvinit.patch, which
-  patches the file necessary to allow openfire to build on
-  openSUSE 11.1.
-  Wed Jan 07 22:18:00 UTC 2008 - Peter Nixon
-- Patch init script to add LSB compliant headers (to build on openSUSE 11.1+)
-- Add rpm prereq line to silence rpmlint
-* Sat Nov 22 2008 claes.backstrom@fsfe.org
-- New upstream 3.6.2
-* Wed Aug 27 2008 claes.backstrom@fsfe.org
-- New upstream release 3.6.0
-* Wed Jul  9 2008 claes.backstrom@fsfe.org
-- New upstream release 3.5.2
-* Thu Feb 14 2008 claes.backstrom@fsfe.org
-- New Upstream Release 3.4.5
-    Openfire New Features
-  * Improved connection pool recovery logic by switching to proxool.
-  * Now possible to allow the same component to connect many times to the same JVM.
-    Openfire Bug Fixes
-  * Fixed small memory leak in Multi User Chat.
-  * LDAP settings (particularly search filters) will no longer get corrupted upon saving.
-  * SSL settings pages now handle broken keystores without crashing.
-  * Added JID to room search results.
-  * Setting VM options from config file in Debian now works.
-  * RPM is no longer throwing warnings about ci and jivedev users.
-  * Debian postinstall is now checking to make sure openfire group exists.
-* Sun Jan 20 2008 claes.backstrom@fsfe.org
-- New Upstream Release 3.4.4
-  * Jetty upgraded to fix announced security issue (http://www.kb.cert.org/vuls/id/553235)
-  * LDAP vCard database storage fixed to work properly with Active Directory and others. !!NOTE!! API Changes for providers were required. See important notes below. (1 vote)
-  * Can now delete an avatar when using LDAP.
-  * Current LDAP settings now being kept when editing config from admin interface.
-  * Openfire install directories, log directories, etc are no longer world readable. (1 vote)
-  * RPM uninstall no longer fails if Openfire not currently running.
 * Wed Jan  9 2008 claes.backstrom@fsfe.org
 - Initial package
