@@ -12,8 +12,8 @@ URL:             http://www.igniterealtime.org/
 Patch0:          openfire-sysvinit.patch
 #Patch1:         openfire-3.7.0-SSLConfig.patch
 #Patch2:         openfire-3.7.0-IPv6-workaround.patch
-%define          prefix /usr/share
-%define          homedir %{prefix}/openfire
+%global          prefix /usr/share
+%global          homedir %{prefix}/openfire
 
 %description
 Openfire is a leading Open Source, cross-platform IM server based on the
@@ -137,6 +137,9 @@ rm -rf %{buildroot}%{homedir}/resources/spank
 %doc documentation/docs/* LICENSE.html README.html changelog.html
 
 %changelog
+* Fri May 22 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.0.4-1
+- Fix spec violations: %global for constants, use %{buildroot}
+
 * Fri Apr 24 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.0.4-1
 - Update to 5.0.4
 - Update Source0 to GitHub release tarball URL
