@@ -2,16 +2,16 @@
 
 Summary:         Openfire XMPP Server
 Name:            openfire
-Version:         5.0.4
+Version:         5.1.0
 Release:         1%{?dist}
+%global          verunder %(echo %{version} | tr '.' '_')
 BuildRequires:   ant java-devel-openjdk fdupes
 Requires:        java
-Source0:         https://github.com/igniterealtime/Openfire/releases/download/v%{version}/openfire-%{version}.tar.gz
-License:         GPL
-URL:             http://www.igniterealtime.org/
+Source0:         https://github.com/igniterealtime/Openfire/releases/download/v%{version}/openfire_%{verunder}.tar.gz
+License:         GPL-2.0-or-later
+URL:             https://www.igniterealtime.org/
+ExclusiveArch:   x86_64 aarch64
 Patch0:          openfire-sysvinit.patch
-#Patch1:         openfire-3.7.0-SSLConfig.patch
-#Patch2:         openfire-3.7.0-IPv6-workaround.patch
 %global          prefix /usr/share
 %global          homedir %{prefix}/openfire
 
@@ -22,17 +22,13 @@ and delivers an innovative feature set.
 
 %package doc
 Summary:     Openfire XMPP Server Documentation
-#BuildArch:  noarch
 
 %description doc
 This package contains optional documentation provided in addition to
 this package's base documentation.
 
 %prep
-%setup -q -n %{name}_src
-%patch0 -p1
-#patch1 -p0
-#%patch2 -p0
+%autosetup -p1 -n %{name}_src
 
 %build
 # Build Tasks
@@ -63,8 +59,6 @@ ln -s -f %{_sysconfdir}/init.d/%{name} %{buildroot}%{_sbindir}/rc%{name}
 chmod 755 %{buildroot}%{homedir}/bin/openfire.sh
 
 # Set up the sysconfig file.
-#mkdir -p %{buildroot}/etc/sysconfig
-#cp %{buildroot}%{homedir}/bin/extra/redhat/openfire-sysconfig %{buildroot}/etc/sysconfig/openfire
 mkdir -p %{buildroot}/var/adm/fillup-templates/
 install -D %{buildroot}%{homedir}/bin/extra/redhat/openfire-sysconfig %{buildroot}/var/adm/fillup-templates/sysconfig.openfire
 chmod -x %{buildroot}/var/adm/fillup-templates/sysconfig.openfire
@@ -88,11 +82,6 @@ rm -rf %{buildroot}%{homedir}/resources/nativeAuth/solaris-sparc
 rm -rf %{buildroot}%{homedir}/resources/nativeAuth/win32-x86
 rm -f %{buildroot}%{homedir}/lib/*.dll
 rm -rf %{buildroot}%{homedir}/resources/spank
-
-# Dont enable fdupes (on resources/security/) as it breaks the crypto store
-# See: http://www.igniterealtime.org/issues/browse/OF-30
-# For now disabled completely..
-#%fdupes -s %{buildroot}
 
 %files
 %attr(750, daemon, daemon) %dir %{homedir}
@@ -123,20 +112,26 @@ rm -rf %{buildroot}%{homedir}/resources/spank
 %config(noreplace) %{homedir}/resources/security/keystore
 %config(noreplace) %{homedir}/resources/security/truststore
 %config(noreplace) %{homedir}/resources/security/client.truststore
-#%doc %{homedir}/documentation
-#%doc %{homedir}/LICENSE.html
-#%doc %{homedir}/README.html
-#%doc %{homedir}/changelog.html
 %{_sbindir}/rc%{name}
 %{_sysconfdir}/init.d/openfire
-#%config(noreplace) %{_sysconfdir}/sysconfig/openfire
 %config(noreplace) /var/adm/fillup-templates/sysconfig.openfire
-#%{homedir}/jre
+%license LICENSE.html
 
 %files doc
-%doc documentation/docs/* LICENSE.html README.html changelog.html
+%doc documentation/docs/* README.html changelog.html
 
 %changelog
+* Sat Jul 05 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.1.0-1
+- Update to 5.1.0
+- Fix Source0 URL: use underscore-separated filename via %%{verunder} macro
+- URL: http -> https
+- Remove commented-out Patch1/Patch2 declarations and applications
+- Remove commented-out sysconfig setup and %%files entries
+
+* Thu Jul 03 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.0.4-1
+- SPDX: GPL -> GPL-2.0-or-later; add ExclusiveArch: x86_64 aarch64
+- %%autosetup -p1; %%license LICENSE.html
+
 * Fri May 22 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.0.4-1
 - Fix spec violations: %global for constants, use %{buildroot}
 
