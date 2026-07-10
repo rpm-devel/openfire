@@ -5,8 +5,15 @@ Name:            openfire
 Version:         5.1.0
 Release:         1%{?dist}
 %global          verunder %(echo %{version} | tr '.' '_')
-BuildRequires:   ant java-devel-openjdk fdupes
-Requires:        java
+%if 0%{?suse_version}
+%global          java_devel_pkg java-21-openjdk-devel
+%global          java_pkg java-21-openjdk
+%else
+%global          java_devel_pkg java-devel
+%global          java_pkg java
+%endif
+BuildRequires:   ant %{java_devel_pkg} fdupes
+Requires:        %{java_pkg}
 Source0:         https://github.com/igniterealtime/Openfire/releases/download/v%{version}/openfire_%{verunder}.tar.gz
 License:         GPL-2.0-or-later
 URL:             https://www.igniterealtime.org/
@@ -122,6 +129,13 @@ rm -rf %{buildroot}%{homedir}/resources/spank
 
 %changelog
 * Sat Jul 05 2026 CasjaysDev <rpm-devel@casjaysdev.pro> - 5.1.0-1
+- Multi-distro: guard java-devel/java (RHEL/Fedora) vs
+  java-21-openjdk-devel/java-21-openjdk (openSUSE/SLES, which has no
+  unversioned java/java-devel meta-package) via %%{java_devel_pkg}/%%{java_pkg}
+- Fix incorrect BuildRequires package name java-devel-openjdk -> java-devel
+  (not a real Fedora/RHEL package; java-devel is the correct virtual name)
+- Verified ant and fdupes package names are identical across RHEL/Fedora
+  and openSUSE/SLES; left unguarded
 - Update to 5.1.0
 - Fix Source0 URL: use underscore-separated filename via %%{verunder} macro
 - URL: http -> https
